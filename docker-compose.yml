@@ -1,0 +1,45 @@
+# 전체 스택(app + postgres)을 한 번에 실행
+# 실행: docker-compose up --build
+#
+# 변수 인터폴레이션(${...})과 env_file은 프로젝트 루트의 .env 파일에서 값을 읽는다.
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # 컨테이너 네트워크에서는 DB host가 localhost가 아니라 postgres 서비스명이어야 한다.
+      # .env의 DATABASE_URL(localhost 기준)을 여기서 오버라이드한다.
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public"
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      postgres:
+        # postgres의 healthcheck가 통과한 후에 app 시작
+        condition: service_healthy
+
+volumes:
+  postgres_data:
