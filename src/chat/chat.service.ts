@@ -29,7 +29,13 @@ export class ChatService {
 
     try {
       const chatRoom = await this.prisma.chatRoom.create({
-        data: { userId, agentId, status: ChatRoomStatus.ACTIVE },
+        // 즉시 매칭이므로 matchedAt을 생성 시점에 기록 (WAITING -> ACTIVE 전환 시각)
+        data: {
+          userId,
+          agentId,
+          status: ChatRoomStatus.ACTIVE,
+          matchedAt: new Date(),
+        },
       });
       return chatRoom;
     } catch (error) {
@@ -73,6 +79,7 @@ export class ChatService {
           userId: entry.userId,
           agentId,
           status: ChatRoomStatus.ACTIVE,
+          matchedAt: new Date(),
         },
       });
       return { chatRoom, entry };
@@ -132,7 +139,8 @@ export class ChatService {
     for (const room of activeRooms) {
       await this.prisma.chatRoom.update({
         where: { id: room.id },
-        data: { status: ChatRoomStatus.WAITING, agentId: null },
+        // 재배정 대상으로 되돌리므로 매칭 시각도 초기화
+        data: { status: ChatRoomStatus.WAITING, agentId: null, matchedAt: null },
       });
       this.agentsService.decrementActiveChat(agentId);
     }

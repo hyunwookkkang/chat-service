@@ -13,6 +13,7 @@ datasource db {
 enum Role {
   USER
   AGENT
+  ADMIN
 }
 
 enum ChatRoomStatus {
@@ -42,6 +43,8 @@ model ChatRoom {
   agentId   String?
   status    ChatRoomStatus @default(WAITING)
   createdAt DateTime       @default(now())
+  // WAITING -> ACTIVE로 매칭된 시각 (대기시간/상담시간 통계 계산용)
+  matchedAt DateTime?
   closedAt  DateTime?
 
   user     User      @relation("UserChatRooms", fields: [userId], references: [id])

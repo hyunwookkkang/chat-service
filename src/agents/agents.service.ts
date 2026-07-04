@@ -57,6 +57,30 @@ export class AgentsService {
     return this.agents.get(agentId);
   }
 
+  // 현재 ONLINE 상태인 상담사 수
+  getOnlineAgentCount(): number {
+    let count = 0;
+    for (const state of this.agents.values()) {
+      if (state.status === 'ONLINE') {
+        count += 1;
+      }
+    }
+    return count;
+  }
+
+  // 인메모리 Map에 등록된 모든 상담사 상태 목록 (관리자 대시보드용)
+  getAllAgents(): Array<{
+    agentId: string;
+    status: AgentStatus;
+    activeChatCount: number;
+  }> {
+    return Array.from(this.agents.entries()).map(([agentId, state]) => ({
+      agentId,
+      status: state.status,
+      activeChatCount: state.activeChatCount,
+    }));
+  }
+
   /**
    * findAvailableAgent
    * - ONLINE 상담사 중 activeChatCount가 가장 낮은 상담사를 선택한다.

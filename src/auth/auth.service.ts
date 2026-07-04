@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -29,6 +30,11 @@ export class AuthService {
   ) {}
 
   async signup(dto: SignupDto) {
+    // ADMIN 계정은 회원가입으로 생성 불가 (시드 스크립트로만 생성)
+    if (dto.role === Role.ADMIN) {
+      throw new ForbiddenException('ADMIN 계정은 회원가입으로 생성할 수 없습니다.');
+    }
+
     const existing = await this.usersService.findByEmail(dto.email);
     if (existing) {
       throw new ConflictException('이미 가입된 이메일입니다.');
