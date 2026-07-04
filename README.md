@@ -223,6 +223,20 @@ docker-compose up --build
 
 ---
 
+## 동작 확인 (수동 E2E 테스트)
+
+브라우저에서 실제 클라이언트로 **로그인 → 상담 요청 → 실시간 배정 → 채팅 → 상담 종료**까지 전체 플로우를 직접 확인 완료했습니다.
+
+확인한 시나리오는 다음과 같습니다.
+
+1. **로그인/인증** — 고객·상담사 계정으로 로그인해 Access/Refresh Token을 발급받고, Socket.io 연결 시 `handshake.auth.token`으로 인증이 통과하는 것을 확인.
+2. **상담 요청 → 실시간 자동 배정** — 상담사가 ONLINE인 상태에서 고객이 `request_consultation`을 보내면, `ChatRoom`이 생성되고 양쪽에 `chat_matched`가 전달되며 같은 room으로 배정되는 것을 확인.
+3. **실시간 채팅** — 고객/상담사가 `send_message`를 주고받으면 같은 room의 양쪽에 `receive_message`로 실시간 브로드캐스트되고, 메시지가 DB에 저장되는 것을 확인.
+4. **상담 종료** — 상담사가 `end_consultation`을 보내면 `ChatRoom`이 `COMPLETED`로 전환되고 `chat_ended`가 전달되며, 상담사 배정 수가 감소하는 것을 확인.
+5. **관리자 대시보드** — ADMIN 계정으로 `/api/admin/dashboard`, `/api/admin/agents`, `/api/admin/stats`를 호출해 대기 수/온라인 상담사 수/진행 중 상담 수 등이 실제 상태와 일치하는 것을 확인.
+
+---
+
 ## 향후 개선 계획 (Future Improvements)
 
 - **Redis 도입**: 다중 서버 확장을 위해 상담사 상태/대기열/Refresh Token을 Redis로 이전하고, `socket.io-redis-adapter`로 서버 간 브로드캐스트를 공유.
