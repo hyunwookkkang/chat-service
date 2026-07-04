@@ -21,7 +21,12 @@ import { QueueService } from './queue.service';
  * - Socket.io 기반 실시간 채팅 게이트웨이.
  * - JWT 인증, 상담 요청/대기열, 메시지, 상담 종료, 상담사 끊김 재배정을 처리한다.
  */
-@WebSocketGateway({ cors: { origin: '*' } })
+@WebSocketGateway({
+  cors: {
+    origin: true,
+    credentials: true,
+  },
+})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(ChatGateway.name);
 
