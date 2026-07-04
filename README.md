@@ -145,6 +145,8 @@ Base URL: `http://localhost:{PORT}`
 | GET | `/api/admin/stats` | 최근 24시간 평균 대기시간/상담시간/총 상담 수 | ADMIN |
 
 > ADMIN 계정은 회원가입으로 만들 수 없으며 시드 스크립트(`prisma/seed.ts`)로 생성합니다. (`admin@test.com` / `admin1234`)
+>
+> ⚠️ **이 계정은 로컬 개발/테스트 전용입니다.** 실제 배포 환경에서는 시드 실행 후 반드시 비밀번호를 변경하거나, 환경변수(`ADMIN_SEED_EMAIL`, `ADMIN_SEED_PASSWORD`)로 시드 계정 정보를 주입하세요. `prisma/seed.ts`는 이 두 환경변수를 우선 사용하고, 없으면 위 기본값으로 fallback합니다.
 
 ---
 
@@ -216,6 +218,8 @@ docker-compose up --build
 | `JWT_REFRESH_SECRET` | Refresh Token 서명 secret (별도 값 권장) | `change-me-refresh` |
 | `JWT_REFRESH_EXPIRES_IN` | Refresh Token 만료 | `7d` |
 | `PORT` | 앱 리슨 포트 | `3000` |
+| `ADMIN_SEED_EMAIL` | (선택) 시드 관리자 이메일. 없으면 `admin@test.com` | `admin@test.com` |
+| `ADMIN_SEED_PASSWORD` | (선택) 시드 관리자 비밀번호. 없으면 `admin1234` | `admin1234` |
 
 ---
 
