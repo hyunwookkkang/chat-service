@@ -193,6 +193,8 @@ npx prisma db seed
 npm run start:dev
 ```
 
+> `npm run start:dev` 실행 전, `.env`의 `PORT`(기본 `3000`)를 점유 중인 이전 프로세스가 `predev` 스크립트로 자동 정리됩니다.
+
 ### B. Docker Compose로 전체 스택 한 번에 실행
 
 ```bash
