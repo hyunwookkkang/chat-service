@@ -1,0 +1,31 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main  # (만약 기본 브랜치가 master라면 master로 변경)
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: SSH to EC2 & Deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/chat-service
+            git pull origin main
+            
+            # Docker 컨테이너 재빌드 및 배포
+            docker compose down
+            docker compose up -d --build
+            
+            # 미사용 이미지 정리 (서버 용량 확보)
+            docker image prune -f

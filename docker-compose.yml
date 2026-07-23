@@ -82,14 +82,16 @@ services:
     container_name: chat-nestjs
     restart: always
     ports:
-      - "3000:3000"
+      - "3001:3001"
+    env_file:
+      - .env
     environment:
       DATABASE_URL: "postgresql://mychatuser:mychatpassword@chat-db:5432/chat_service_db?schema=public"
-      JWT_ACCESS_SECRET: "your_super_secret_access_key_here"
-      JWT_REFRESH_SECRET: "your_super_secret_refresh_key_here"
+      JWT_SECRET: "dev-secret-key-12345"
+      JWT_ACCESS_SECRET: "dev-secret-key-12345"
+      JWT_REFRESH_SECRET: "dev-refresh-secret-key-67890"
       NODE_ENV: production
     depends_on:
       - chat-db
-
 volumes:
   postgres_data:
