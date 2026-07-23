@@ -2,6 +2,8 @@
 
 기업용 **실시간 CS 상담 및 자동 배정 시스템**의 백엔드입니다. 고객이 상담을 요청하면 온라인 상담사 중 가장 여유 있는 사람에게 자동으로 배정되고, WebSocket으로 실시간 채팅이 이루어집니다. 상담사가 모두 바쁠 때는 대기열로, 상담사가 갑자기 연결이 끊기면 자동 재배정으로 처리합니다.
 
+https://api.chat-service.shop → AWS EC2
+
 인증(JWT Access/Refresh), 실시간 채팅(Socket.io), 자동 배정, 대기열, 재배정, 관리자 대시보드까지 CS 시스템의 핵심 흐름을 담고 있습니다.
 
 ![NestJS](https://img.shields.io/badge/NestJS-E0234E?logo=nestjs&logoColor=white)
